@@ -5249,39 +5249,52 @@ function submitFeedback() {
     return;
   }
 
-  // ── حفظ محلي في localStorage ──
-  const allFeedback = JSON.parse(localStorage.getItem('doa_feedback') || '[]');
+  // ── تجميع البيانات ──
   const entry = {
-    id:       Date.now(),
-    guest:    window._guestName || 'زائر',
-    code:     window._guestCode || '—',
+    _subject: 'DoA Matrix — ملاحظة جديدة',
     rating,
     liked,
     improve,
     use,
     extra,
     time:     new Date().toISOString(),
-    page:     document.title,
+    url:      location.href,
   };
-  allFeedback.push(entry);
-  localStorage.setItem('doa_feedback', JSON.stringify(allFeedback));
 
-  // ── إرسال لـ Formspree (اختياري — ضع رابطك) ──
-  const FORMSPREE_URL = 'https://formspree.io/f/xdapwkzj'; // ← غيّر هذا
-  if (FORMSPREE_URL.includes('YOUR_FORM_ID') === false) {
-    fetch(FORMSPREE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(entry)
-    }).catch(() => {});
-  }
+  // ── حفظ احتياطي محلي ──
+  try {
+    const all = JSON.parse(localStorage.getItem('doa_feedback') || '[]');
+    all.push(entry);
+    localStorage.setItem('doa_feedback', JSON.stringify(all));
+  } catch(e) {}
 
-  // ── إظهار رسالة النجاح ──
-  document.getElementById('fb-form-wrap').style.display = 'none';
-  document.getElementById('fb-success').style.display   = 'block';
+  // ── إرسال لـ Formspree ──
+  const FORMSPREE_URL = 'https://formspree.io/f/xdapwkzj';
+  const btn = document.getElementById('fb-submit');
+  btn.disabled     = true;
+  btn.textContent  = 'جارٍ الإرسال...';
 
-  setTimeout(closeFeedback, 3000);
-  console.log('📝 ملاحظة جديدة:', entry);
+  fetch(FORMSPREE_URL, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body:    JSON.stringify(entry)
+  })
+  .then(function(res) {
+    if (res.ok) {
+      document.getElementById('fb-form-wrap').style.display = 'none';
+      document.getElementById('fb-success').style.display   = 'block';
+      setTimeout(closeFeedback, 3000);
+    } else {
+      btn.disabled    = false;
+      btn.textContent = 'إرسال الملاحظة ←';
+      alert('تعذّر إرسال الملاحظة — حاول مجدداً');
+    }
+  })
+  .catch(function() {
+    btn.disabled    = false;
+    btn.textContent = 'إرسال الملاحظة ←';
+    alert('تعذّر الاتصال — تحقق من الإنترنت وحاول مجدداً');
+  });
 }
 
 // ── قراءة الملاحظات من console: showFeedbackLog() ──
