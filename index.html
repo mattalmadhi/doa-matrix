@@ -1289,17 +1289,29 @@ select:focus-visible,
    FEEDBACK BUTTON + POPUP
 ══════════════════════════════════════════════════════ */
 #fb-trigger {
-  position: fixed; bottom: 24px; left: 24px; z-index: 9000;
-  background: #C9A84C; color: #0D1B2A;
-  border: none; border-radius: 50px;
-  padding: 12px 22px;
-  font-size: 14px; font-weight: 700;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 9000;
+  background: #C9A84C;
+  color: #0D1B2A;
+  border: none;
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 700;
   font-family: 'Tajawal', sans-serif;
-  cursor: pointer; transition: all .2s;
-  box-shadow: 0 4px 20px rgba(201,168,76,.35);
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 4px 16px rgba(201,168,76,.3);
   display: flex;
+  align-items: center;
+  gap: 6px;
 }
-#fb-trigger:hover { background: #E8C97A; transform: translateY(-2px); }
+#fb-trigger:hover { background: #E8C97A; transform: translateY(-1px); }
+@media (max-width: 640px) {
+  #fb-trigger { top: 10px; left: 10px; padding: 6px 14px; font-size: 12px; }
+}
 
 #fb-overlay {
   position: fixed; inset:0; z-index: 9500;
@@ -1315,6 +1327,8 @@ select:focus-visible,
   width: 100%; max-width: 520px;
   max-height: 90vh; overflow-y: auto;
   position: relative;
+  direction: rtl;
+  text-align: right;
 }
 #fb-modal h2 {
   font-size: 20px; font-weight: 700;
@@ -1335,7 +1349,9 @@ select:focus-visible,
   border-radius: 10px; padding: 12px 14px;
   color: #fff; font-size: 13px;
   font-family: 'Tajawal', sans-serif;
-  direction: rtl; transition: border .2s;
+  direction: rtl;
+  text-align: right;
+  transition: border .2s;
 }
 #fb-modal input:focus, #fb-modal select:focus, #fb-modal textarea:focus {
   outline:none; border-color: #C9A84C;
@@ -1343,7 +1359,7 @@ select:focus-visible,
 #fb-modal textarea { min-height: 90px; resize: vertical; }
 #fb-modal select option { background: #1A2E42; }
 
-.stars-row { display:flex; gap:6px; flex-direction:row-reverse; }
+.stars-row { display:flex; gap:6px; flex-direction:row; direction:ltr; justify-content:flex-end; }
 .stars-row input { display:none; }
 .stars-row label {
   font-size: 28px; cursor: pointer;
@@ -1364,7 +1380,7 @@ select:focus-visible,
 }
 #fb-submit:hover { background: #E8C97A; }
 #fb-close {
-  position: absolute; top:16px; left:16px;
+  position: absolute; top:16px; right:16px;
   background: transparent; border:none;
   color: #64748B; font-size: 22px;
   cursor: pointer; line-height:1;
