@@ -1,0 +1,66 @@
+# ══════════════════════════════════════════════════════════════════
+# DoA Matrix® — Netlify Production Configuration
+# ══════════════════════════════════════════════════════════════════
+
+[build]
+  # No build command needed — pure static HTML
+  publish = "."
+  ignore  = "exit 0"   # Never skip deploy on push
+
+# ── Headers ────────────────────────────────────────────────────────
+# Security headers (A+ on securityheaders.com)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Prevent clickjacking
+    X-Frame-Options            = "SAMEORIGIN"
+    # Prevent MIME sniffing
+    X-Content-Type-Options     = "nosniff"
+    # XSS protection (legacy browsers)
+    X-XSS-Protection           = "1; mode=block"
+    # Referrer policy
+    Referrer-Policy            = "strict-origin-when-cross-origin"
+    # Permissions policy — minimal surface
+    Permissions-Policy         = "camera=(), microphone=(), geolocation=()"
+    # Content Security Policy
+    Content-Security-Policy    = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self';"
+    # HSTS — force HTTPS (max 1 year)
+    Strict-Transport-Security  = "max-age=31536000; includeSubDomains; preload"
+
+# Cache HTML — short TTL so updates deploy instantly
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Cache static assets — long TTL (fonts/images loaded from CDN)
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ── Redirects ───────────────────────────────────────────────────────
+# Redirect bare domain to www (optional — remove if not needed)
+# [[redirects]]
+#   from   = "https://doamatrix.com/*"
+#   to     = "https://www.doamatrix.com/:splat"
+#   status = 301
+#   force  = true
+
+# SPA fallback — not needed for single-file app, but safe to include
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# ── Context overrides ───────────────────────────────────────────────
+[context.production]
+  environment = { NODE_ENV = "production" }
+
+[context.deploy-preview]
+  environment = { NODE_ENV = "preview" }
